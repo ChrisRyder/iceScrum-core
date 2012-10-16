@@ -34,28 +34,33 @@ import org.springframework.beans.BeanWrapperImpl
 import org.codehaus.groovy.grails.commons.GrailsDomainClassProperty
 import org.codehaus.groovy.grails.commons.GrailsClassUtils
 import org.codehaus.groovy.grails.support.proxy.EntityProxyHandler
+import org.codehaus.groovy.grails.commons.GrailsApplication
+import org.codehaus.groovy.grails.commons.DomainClassArtefactHandler
 
 public class XMLIceScrumDomainClassMarshaller extends DomainClassMarshaller {
 
     private ProxyHandler proxyHandler
     private Map propertiesMap
     private boolean includeVersion
+    private GrailsApplication application
 
-    public XMLIceScrumDomainClassMarshaller(boolean includeVersion, Map propertiesMap) {
-        super(includeVersion)
+    public XMLIceScrumDomainClassMarshaller(boolean includeVersion, GrailsApplication application, Map propertiesMap) {
+        super(includeVersion, application)
         this.includeVersion = includeVersion
         this.proxyHandler = new DefaultProxyHandler()
         this.propertiesMap = propertiesMap
+        this.application = application
     }
 
     public boolean supports(Object object) {
         def configName = GrailsNameUtils.getShortName(object.getClass()).toLowerCase()
-        return (ConverterUtil.isDomainClass(object.getClass()) && propertiesMap."${configName}" != null)
+        def name = ConverterUtil.trimProxySuffix(object.getClass().getName())
+        return ((application.isArtefactOfType(DomainClassArtefactHandler.TYPE, name)) && propertiesMap."${configName}" != null)
     }
 
     public void marshalObject(Object value, XML xml) throws ConverterException {
         Class clazz = value.getClass()
-        GrailsDomainClass domainClass = ConverterUtil.getDomainClass(clazz.getName())
+        GrailsDomainClass domainClass = (GrailsDomainClass)application.getArtefact(DomainClassArtefactHandler.TYPE, ConverterUtil.trimProxySuffix(clazz.getName()))
         BeanWrapper beanWrapper = new BeanWrapperImpl(value)
         def configName = GrailsNameUtils.getShortName(clazz).toLowerCase()
 

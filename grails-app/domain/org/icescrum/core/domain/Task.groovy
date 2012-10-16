@@ -140,12 +140,12 @@ class Task extends BacklogElement implements Serializable {
                     eq 'id', userid
                 }
             } else if (u) {
-                responsible {
-                    if (u.preferences.filterTask == 'myTasks') {
+                if (u.preferences.filterTask == 'myTasks') {
+                    responsible {
                         eq 'id', u.id
                     }
                 }
-                if (u.preferences.filterTask == 'freeTasks') {
+                else if (u.preferences.filterTask == 'freeTasks') {
                     isNull('responsible')
                 }
                 if (u.preferences.hideDoneState && s?.state == Sprint.STATE_INPROGRESS) {
@@ -176,12 +176,12 @@ class Task extends BacklogElement implements Serializable {
                     eq 'id', userid
                 }
             } else if (u) {
-                responsible {
-                    if (u.preferences.filterTask == 'myTasks') {
+                if (u.preferences.filterTask == 'myTasks') {
+                    responsible {
                         eq 'id', u.id
                     }
                 }
-                if (u.preferences.filterTask == 'freeTasks') {
+                else if (u.preferences.filterTask == 'freeTasks') {
                     isNull('responsible')
                 }
                 if (u.preferences.hideDoneState && s?.state == Sprint.STATE_INPROGRESS) {

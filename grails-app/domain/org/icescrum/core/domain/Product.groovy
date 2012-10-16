@@ -35,7 +35,7 @@ import org.springframework.security.acls.domain.BasePermission
 
 class Product extends TimeBox implements Serializable {
 
-    static final long serialVersionUID = -8854429090297032383L
+    //static final long serialVersionUID = -8854429090297032383L
 
     int planningPokerGameType = PlanningPokerGame.FIBO_SUITE
     String name = ""
@@ -82,7 +82,7 @@ class Product extends TimeBox implements Serializable {
         features cascade: 'all-delete-orphan', sort: 'rank', batchSize: 10, cache: true
         stories cascade: 'all-delete-orphan', sort: 'rank', 'label': 'asc', batchSize: 25, cache: true
         domains cascade: 'all-delete-orphan', batchSize: 10, cache: true
-        releases cascade: 'all-delete-orphan', batchSize: 10, sort: 'id', cache: true
+        releases cascade: 'all-delete-orphan', batchSize: 10, cache: true
         impediments cascade: 'all-delete-orphan', batchSize: 10, cache: true
         pkey(index: 'p_key_index')
         name(index: 'p_name_index')
@@ -135,7 +135,7 @@ class Product extends TimeBox implements Serializable {
     }
 
     static recentActivity(Product currentProductInstance) {
-        executeQuery("SELECT DISTINCT a.activity " +
+        executeQuery("SELECT a.activity " +
                 "FROM grails.plugin.fluxiable.ActivityLink as a, org.icescrum.core.domain.Product as p " +
                 "WHERE a.type='product' " +
                 "and p.id=a.activityRef " +

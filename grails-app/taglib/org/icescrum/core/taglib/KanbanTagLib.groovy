@@ -25,12 +25,9 @@
 package org.icescrum.core.taglib
 
 import org.icescrum.components.UtilsWebComponents
-import grails.plugin.springcache.key.CacheKeyBuilder
-import org.codehaus.groovy.grails.commons.ApplicationHolder
 
 class KanbanTagLib {
     static namespace = 'is'
-    def springcacheService
 
     def kanban = {attrs, body ->
         pageScope.kanbanHeaders = []
@@ -74,9 +71,16 @@ class KanbanTagLib {
             }
             if (row) {
                 out << '<tr class="table-line ' + (row.attrs?.'class' ? row.attrs?.'class' : '') + ' " ' + (row.attrs.type != null ? 'type="' + row.attrs.type + '"' : '') + ' ' + (row.elemid ? 'data-elemid="' + row.elemid + '"' : '') + '> '
+
                 row.columns.eachWithIndex { col, indexCol ->
-                    out << '<td class="kanban-col kanban-cell ' + col.'class' + '" ' + (col.key != null ? 'type="' + col.key + '"' : '') + '">' + is.nbps(null, col?.body(row.attrs)) + '</td>'
+                    if (row.attrs){
+                        row.attrs.key = col.key
+                    }
+                    out << '<td class="kanban-col kanban-cell ' + col['class'] + '" ' + (col.key != null ? 'type="' + col.key + '"' : '') + '>'
+                    out << is.nbps(null, col?.body ? col.body(row.attrs) : '') + '</td>'
                 }
+                row.attrs?.remove('key')
+
                 out << '</tr>'
             }
         }
@@ -179,7 +183,7 @@ class KanbanTagLib {
         def options = [
                 key: attrs.key,
                 'class': attrs.'class' ?: '',
-                body: body ?: {->}
+                body: body ?: null
         ]
         pageScope.kanbanColumns << options
     }

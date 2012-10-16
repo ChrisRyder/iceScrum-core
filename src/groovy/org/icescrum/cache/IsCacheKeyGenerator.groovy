@@ -30,8 +30,7 @@ import grails.plugin.springcache.key.CacheKeyBuilder
 import grails.plugin.springcache.web.ContentCacheParameters
 import grails.plugin.springcache.web.key.WebContentKeyGenerator
 import org.icescrum.core.domain.Product
-import org.icescrum.core.domain.BacklogElement
-import org.icescrum.core.domain.TimeBox
+
 import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
 import org.icescrum.core.domain.Story
 import org.icescrum.core.domain.Feature

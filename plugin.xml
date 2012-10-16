@@ -1,4 +1,4 @@
-<plugin name='icescrum-core' version='1.6-SNAPSHOT' grailsVersion='1.3.7 &gt; *'>
+<plugin name='icescrum-core' version='2.0.3' grailsVersion='1.3.7 &gt; *'>
   <author>iceScrum</author>
   <authorEmail>contact@icescrum.org</authorEmail>
   <title>iceScrum core plugin (include domain / services / taglib)</title>
@@ -6,13 +6,11 @@
     iceScrum core plugin (include domain / services / taglib)
 </description>
   <documentation>http://www.icescrum.org/plugin/icescrum-core</documentation>
+  <type>IcescrumCoreGrailsPlugin</type>
   <resources>
-    <resource>BuildConfig</resource>
     <resource>DefaultIceScrumCoreConfig</resource>
-    <resource>UrlMappings</resource>
     <resource>org.icescrum.core.domain.AcceptanceTest</resource>
     <resource>org.icescrum.core.domain.Actor</resource>
-    <resource>org.icescrum.core.domain.BacklogElement</resource>
     <resource>org.icescrum.core.domain.Cliche</resource>
     <resource>org.icescrum.core.domain.Domain</resource>
     <resource>org.icescrum.core.domain.Feature</resource>
@@ -62,17 +60,55 @@
     <resource>org.icescrum.core.taglib.KanbanTagLib</resource>
     <resource>org.icescrum.core.taglib.MarkItUpTagLib</resource>
     <resource>org.icescrum.core.taglib.MenuTagLib</resource>
-    <resource>org.icescrum.core.taglib.NoticeTagLib</resource>
     <resource>org.icescrum.core.taglib.PanelTagLib</resource>
     <resource>org.icescrum.core.taglib.ScrumTagLib</resource>
     <resource>org.icescrum.core.taglib.TableTagLib</resource>
     <resource>org.icescrum.core.taglib.ThemeTagLib</resource>
     <resource>org.icescrum.core.taglib.TimelineTagLib</resource>
-    <resource>org.icescrum.core.taglib.TooltipTagLib</resource>
     <resource>org.icescrum.core.taglib.WindowTagLib</resource>
     <resource>NL2BRCodec</resource>
     <resource>org.icescrum.core.support.MenuBarSupport</resource>
   </resources>
-  <dependencies />
+  <repositories>
+    <repository name='grailsCentral' url='http://grails.org/plugins' />
+    <repository name='http://repo.grails.org/grails/core' url='http://repo.grails.org/grails/core/' />
+    <repository name='mavenCentral' url='http://repo1.maven.org/maven2/' />
+    <repository name='https://oss.sonatype.org/content/repositories/snapshots/' url='https://oss.sonatype.org/content/repositories/snapshots/' />
+    <repository name='http://repo.icescrum.org/artifactory/plugins-release/' url='http://repo.icescrum.org/artifactory/plugins-release/' />
+    <repository name='http://repo.icescrum.org/artifactory/plugins-snapshot/' url='http://repo.icescrum.org/artifactory/plugins-snapshot/' />
+    <repository name='http://m2repo.spockframework.org/ext/' url='http://m2repo.spockframework.org/ext/' />
+    <repository name='http://m2repo.spockframework.org/snapshots/' url='http://m2repo.spockframework.org/snapshots/' />
+    <repository name='http://download.java.net/maven/2/' url='http://download.java.net/maven/2/' />
+    <repository name='ebrRelease' url='http://repository.springsource.com/maven/bundles/release/' />
+    <repository name='ebrExternal' url='http://repository.springsource.com/maven/bundles/external/' />
+    <repository name='https://repository.jboss.org/nexus/' url='https://repository.jboss.org/nexus/' />
+  </repositories>
+  <dependencies>
+    <compile>
+      <dependency group='org.atmosphere' name='atmosphere-runtime' version='1.0.1' />
+      <dependency group='org.codehaus.groovy.modules.http-builder' name='http-builder' version='0.5.0' />
+    </compile>
+  </dependencies>
+  <plugins>
+    <compile>
+      <plugin group='org.grails.plugins' name='taggable' version='1.0.1' />
+      <plugin group='org.icescrum' name='fluxiable' version='0.3.2' />
+      <plugin group='org.grails.plugins' name='springcache' version='1.3.2-SNAPSHOT' />
+      <plugin group='org.grails.plugins' name='wikitext' version='0.1.2' />
+      <plugin group='org.grails.plugins' name='burning-image' version='0.5.0' />
+      <plugin group='org.grails.plugins' name='autobase' version='1.0.0.0' />
+      <plugin group='org.grails.plugins' name='rollback-on-exception' version='0.1' />
+      <plugin group='org.icescrum' name='icescrum-attachmentable' version='0.3' />
+      <plugin group='org.grails.plugins' name='spring-security-acl' version='1.1.1' />
+      <plugin group='org.grails.plugins' name='spring-events' version='1.2' />
+      <plugin group='org.icescrum' name='commentable' version='1.1' />
+      <plugin group='org.grails.plugins' name='followable' version='0.3' />
+      <plugin group='org.grails.plugins' name='mail' version='1.0' />
+      <plugin group='org.grails.plugins' name='jdbc-pool' version='1.0.9.3' />
+      <plugin group='org.grails.plugins' name='jasper' version='1.6.0' />
+      <plugin group='org.grails.plugins' name='spring-security-core' version='1.2.7.3' />
+    </compile>
+  </plugins>
+  <runtimePluginRequirements />
   <behavior />
 </plugin>

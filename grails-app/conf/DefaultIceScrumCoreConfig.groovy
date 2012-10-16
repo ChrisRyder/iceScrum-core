@@ -1,4 +1,5 @@
 import org.springframework.cache.ehcache.EhCacheFactoryBean
+import org.atmosphere.cpr.BroadcasterLifeCyclePolicy
 
 /*
 * Copyright (c) 2011 Kagilum.
@@ -27,7 +28,12 @@ icescrum {
         websocket = false
         servlet {
             // Servlet initialization parameters
-            initParams = ['org.atmosphere.useNative': 'true','org.atmosphere.useWebSocket': icescrum.push.websocket]
+            initParams = ['org.atmosphere.useNative': true,
+                          'org.atmosphere.useWebSocket': icescrum.push.websocket,
+                          'org.atmosphere.cpr.AtmosphereInterceptor.disableDefaults': true,
+                          'org.atmosphere.cpr.broadcaster.shareableThreadPool': true,
+                          'org.atmosphere.cpr.broadcasterLifeCyclePolicy': 'EMPTY_DESTROY',
+                          'org.atmosphere.cpr.broadcastFilterClasses': 'org.icescrum.atmosphere.StreamFilter']
             urlPattern = '/stream/app'
         }
         handlers {

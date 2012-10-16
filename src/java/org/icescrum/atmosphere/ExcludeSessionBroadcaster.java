@@ -18,9 +18,7 @@
 */
 package org.icescrum.atmosphere;
 
-import org.atmosphere.cpr.AtmosphereResource;
-import org.atmosphere.cpr.AtmosphereServlet;
-import org.atmosphere.cpr.BroadcasterFuture;
+import org.atmosphere.cpr.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -32,21 +30,21 @@ public class ExcludeSessionBroadcaster extends org.atmosphere.util.ExcludeSessio
 
     static final String SESSION_ID_ATTRIBUTE = "session_id_atmo";
 
-    public ExcludeSessionBroadcaster(String name, AtmosphereServlet.AtmosphereConfig config) {
+    public ExcludeSessionBroadcaster(String name, AtmosphereConfig config) {
         super(name, config);
     }
 
     @Override
-    public <T> Future<T> broadcast(T msg, HttpSession s) {
+    public Future<Object> broadcast(Object msg, HttpSession s) {
 
         if (destroyed.get()) {
             throw new IllegalStateException("This Broadcaster has been destroyed and cannot be used");
         }
 
-        Set<AtmosphereResource<?, ?>> subset = new HashSet<AtmosphereResource<?, ?>>();
+        Set<AtmosphereResource> subset = new HashSet<AtmosphereResource>();
         subset.addAll(resources);
 
-        for (AtmosphereResource<?, ?> r : resources) {
+        for (AtmosphereResource r : resources) {
                 String sid = (String)((HttpServletRequest) r.getRequest()).getAttribute(SESSION_ID_ATTRIBUTE);
                 if (s != null){
                     if (!r.getAtmosphereResourceEvent().isCancelled() && s.getId().equals(sid)) {
@@ -57,19 +55,16 @@ public class ExcludeSessionBroadcaster extends org.atmosphere.util.ExcludeSessio
 
         start();
         Object newMsg = filter(msg);
-        if (newMsg == null) {
-            return null;
-        }
-
-        BroadcasterFuture<Object> f = new BroadcasterFuture<Object>(newMsg);
+        if (newMsg == null) return null;
+        BroadcasterFuture<Object> f = new BroadcasterFuture<Object>(newMsg, subset.size(), broadcasterListeners, this);
         messages.offer(new Entry(newMsg, subset, f, msg));
         return f;
     }
 
     @Override
-    public AtmosphereResource<?,?> addAtmosphereResource(AtmosphereResource<?,?> r){
+    public Broadcaster addAtmosphereResource(AtmosphereResource r){
         ((HttpServletRequest) r.getRequest()).setAttribute(SESSION_ID_ATTRIBUTE, ((HttpServletRequest) r.getRequest()).getSession().getId());
         super.addAtmosphereResource(r);
-        return r;
+        return this;
     }
 }

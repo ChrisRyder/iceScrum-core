@@ -37,30 +37,35 @@ import org.codehaus.groovy.grails.support.proxy.ProxyHandler
 import grails.util.GrailsNameUtils
 import org.codehaus.groovy.grails.support.proxy.EntityProxyHandler
 import org.icescrum.core.domain.Cliche
+import org.codehaus.groovy.grails.commons.GrailsApplication
+import org.codehaus.groovy.grails.commons.DomainClassArtefactHandler
 
 public class JSONIceScrumDomainClassMarshaller extends DomainClassMarshaller {
 
-    private ProxyHandler proxyHandler;
-    private Map propertiesMap;
-    private boolean includeClass;
+    private ProxyHandler proxyHandler
+    private Map propertiesMap
+    private boolean includeClass
+    private GrailsApplication application
 
-    public JSONIceScrumDomainClassMarshaller(boolean includeVersion, boolean includeClass, Map propertiesMap) {
-        super(includeVersion)
+    public JSONIceScrumDomainClassMarshaller(boolean includeVersion, boolean includeClass, GrailsApplication application, Map propertiesMap) {
+        super(includeVersion, application)
         this.proxyHandler = new DefaultProxyHandler()
-        this.propertiesMap = propertiesMap;
-        this.includeClass = includeClass;
+        this.propertiesMap = propertiesMap
+        this.includeClass = includeClass
+        this.application = application
     }
 
     public boolean supports(Object object) {
         def configName = GrailsNameUtils.getShortName(object.getClass()).toLowerCase()
-        return (ConverterUtil.isDomainClass(object.getClass()) && propertiesMap."${configName}" != null)
+        def name = ConverterUtil.trimProxySuffix(object.getClass().getName())
+        return ((application.isArtefactOfType(DomainClassArtefactHandler.TYPE, name)) && propertiesMap."${configName}" != null)
     }
 
     public void marshalObject(Object value, JSON json) throws ConverterException {
         JSONWriter writer = json.getWriter();
         value = proxyHandler.unwrapIfProxy(value);
         Class<?> clazz = value.getClass();
-        GrailsDomainClass domainClass = ConverterUtil.getDomainClass(clazz.getName());
+        GrailsDomainClass domainClass = (GrailsDomainClass)application.getArtefact(DomainClassArtefactHandler.TYPE, ConverterUtil.trimProxySuffix(clazz.getName()))
         BeanWrapper beanWrapper = new BeanWrapperImpl(value);
         def configName = GrailsNameUtils.getShortName(clazz).toLowerCase()
 

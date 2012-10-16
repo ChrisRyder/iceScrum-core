@@ -79,7 +79,7 @@ import org.springframework.validation.Errors
 class IcescrumCoreGrailsPlugin {
     def groupId = 'org.icescrum'
     // the plugin version
-    def version = "1.6-SNAPSHOT"
+    def version = "2.0.3"
     // the version or versions of Grails the plugin is designed for
     def grailsVersion = "1.3.7 > *"
     // the other plugins this plugin depends on
@@ -293,16 +293,16 @@ class IcescrumCoreGrailsPlugin {
     def doWithApplicationContext = { applicationContext ->
         //For iceScrum internal
         def properties = application.config?.icescrum?.marshaller
-        JSON.registerObjectMarshaller(new JSONIceScrumDomainClassMarshaller(true, true, properties), 1)
-        XML.registerObjectMarshaller(new XMLIceScrumDomainClassMarshaller(true, properties), 1)
+        JSON.registerObjectMarshaller(new JSONIceScrumDomainClassMarshaller(true, true, application, properties), 1)
+        XML.registerObjectMarshaller(new XMLIceScrumDomainClassMarshaller(true, application, properties), 1)
 
         properties = application.config?.icescrum?.restMarshaller
         //For rest API
         JSON.createNamedConfig('rest'){
-            it.registerObjectMarshaller(new JSONIceScrumDomainClassMarshaller(false, false, properties),2)
+            it.registerObjectMarshaller(new JSONIceScrumDomainClassMarshaller(false, false, application, properties),2)
         }
         XML.createNamedConfig('rest'){
-            it.registerObjectMarshaller(new XMLIceScrumDomainClassMarshaller(false, properties), 2)
+            it.registerObjectMarshaller(new XMLIceScrumDomainClassMarshaller(false, application, properties), 2)
         }
         applicationContext.bootStrapService.start()
     }
@@ -758,8 +758,12 @@ class IcescrumCoreGrailsPlugin {
             }
         }
 
-        source.metaClass.withTask = { def id = 'id', Closure c ->
-            def task = Task.getInProduct(params.long('product'), (id instanceof String ? params."$id".toLong() : id))
+        source.metaClass.withTask = { def id = 'id', def uid = false, Closure c ->
+            def task
+            if (uid)
+                task = (Task)Task.getInProductWithUid(params.long('product'), (id instanceof String ? params."$id".toInteger() : id) ).list()
+            else
+                task = (Task)Task.getInProduct(params.long('product'), (id instanceof String ? params."$id".toLong() : id) ).list()
             if (task) {
                 try {
                     c.call task

@@ -32,6 +32,8 @@ import org.icescrum.core.event.IceScrumStoryEvent
 import org.icescrum.plugins.attachmentable.domain.Attachment
 import org.springframework.security.core.context.SecurityContextHolder as SCH
 import grails.util.GrailsNameUtils
+import grails.plugin.fluxiable.Activity
+import grails.plugin.fluxiable.ActivityLink
 
 
 class Story extends BacklogElement implements Cloneable, Serializable {
@@ -364,30 +366,32 @@ class Story extends BacklogElement implements Cloneable, Serializable {
                 if (termInteger?.isInteger()){
                     eq 'uid', termInteger.toInteger()
                 }
-                tasks {
-                    if (term) {
-                        or {
-                            if (termInteger?.isInteger()){
-                                eq 'uid', termInteger.toInteger()
-                            }else{
-                                ilike 'name', term
-                                ilike 'description', term
-                                ilike 'notes', term
+                if (term || userid || u) {
+                    tasks {
+                        if (term) {
+                            or {
+                                if (termInteger?.isInteger()){
+                                    eq 'uid', termInteger.toInteger()
+                                }else{
+                                    ilike 'name', term
+                                    ilike 'description', term
+                                    ilike 'notes', term
+                                }
                             }
                         }
-                    }
-                    if (userid) {
-                        responsible {
-                            eq 'id', userid
-                        }
-                    } else if (u) {
-                        responsible {
+                        if (userid) {
+                            responsible {
+                                eq 'id', userid
+                            }
+                        } else if (u) {
                             if (u.preferences.filterTask == 'myTasks') {
-                                eq 'id', u.id
+                                responsible {
+                                    eq 'id', u.id
+                                }
                             }
-                        }
-                        if (u.preferences.filterTask == 'freeTasks') {
-                            isNull('responsible')
+                            else if (u.preferences.filterTask == 'freeTasks') {
+                                isNull('responsible')
+                            }
                         }
                     }
                 }
@@ -503,7 +507,7 @@ class Story extends BacklogElement implements Cloneable, Serializable {
     }
 
     static recentActivity(Product currentProductInstance) {
-        executeQuery("SELECT DISTINCT a.activity " +
+        executeQuery("SELECT a.activity " +
                 "FROM grails.plugin.fluxiable.ActivityLink as a, org.icescrum.core.domain.Story as s " +
                 "WHERE a.type='story' " +
                 "and s.backlog=:p " +
@@ -513,7 +517,7 @@ class Story extends BacklogElement implements Cloneable, Serializable {
     }
 
     static recentActivity(User user) {
-        executeQuery("SELECT DISTINCT a.activity, s.backlog " +
+        executeQuery("SELECT a.activity, s.backlog " +
                 "FROM grails.plugin.fluxiable.ActivityLink as a, org.icescrum.core.domain.Story as s " +
                 "WHERE a.type='story' " +
                 "and s.backlog.id in (SELECT DISTINCT p.id " +
@@ -525,23 +529,6 @@ class Story extends BacklogElement implements Cloneable, Serializable {
                 "and s.id=a.activityRef " +
                 "and not (a.activity.code like 'task') " +
                 "ORDER BY a.activity.dateCreated DESC", [uid: user.id], [cache:true,max: 15])
-    }
-
-    static recentActivity(Team currentTeamInstance) {
-        executeQuery("SELECT DISTINCT a.activity " +
-                "FROM grails.plugin.fluxiable.ActivityLink as a, org.icescrum.core.domain.Story as s, org.icescrum.core.domain.Product as p " +
-                "INNER JOIN s.backlog.teams as team " +
-                "WHERE " +
-                "((a.type='story' " +
-                "and team.id=:t " +
-                "and not (a.activity.code like 'task') " +
-                "and s.id=a.activityRef) " +
-                "OR (a.type='product' " +
-                "and p.id=a.activityRef " +
-                "and p.id=s.backlog.id)) " +
-                "and a.activity.posterId in " +
-                "(SELECT DISTINCT u2.id FROM org.icescrum.core.domain.User as u2 INNER JOIN u2.teams as t WHERE t.id = :t)" +
-                "ORDER BY a.activity.dateCreated DESC", [t: currentTeamInstance.id], [max: 15])
     }
 
     static findLastUpdatedComment(long storyId) {

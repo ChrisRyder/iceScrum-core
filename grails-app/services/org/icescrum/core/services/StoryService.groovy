@@ -87,7 +87,6 @@ class StoryService {
         }
     }
 
-    @PreAuthorize('!archivedProduct(#story.backlog)')
     void delete(Collection<Story> stories, history = true) {
         bufferBroadcast()
         stories.each { story ->
@@ -735,7 +734,7 @@ class StoryService {
             }
 
             //Move story to last rank in sprint
-            rank(story, Story.countByParentSprint(story.parentSprint))
+            rank(story, Story.countByParentSprint(story.parentSprint).toInteger())
 
             story.state = Story.STATE_DONE
             story.doneDate = new Date()
@@ -786,7 +785,7 @@ class StoryService {
             story.parentSprint.velocity -= story.effort
 
             //Move story to last rank of in progress stories in sprint
-            rank(story, Story.countByParentSprintAndState(story.parentSprint, Story.STATE_INPROGRESS) + 1)
+            rank(story, Story.countByParentSprintAndState(story.parentSprint, Story.STATE_INPROGRESS).toInteger() + 1)
 
             if (!story.save())
                 throw new RuntimeException()

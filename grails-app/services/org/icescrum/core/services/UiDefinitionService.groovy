@@ -54,7 +54,7 @@ class UiDefinitionService {
                 log.warn("UI definitions file $it.clazz.name does not define any UI definition")
             }
 
-            if (config.modulesResources){
+            if (config.modulesResources && enabled){
                 grailsApplication.config.modulesResources = grailsApplication.config.modulesResources ?: []
                 if (config.modulesResources instanceof String){
                     grailsApplication.config.modulesResources.add(config.modulesResources)

@@ -41,9 +41,6 @@ class FormTagLib {
 
     static namespace = 'is'
 
-    def grailsApplication
-    def grailsAttributes
-
     /**
      * Generate an autocomplete field
      */
@@ -200,7 +197,7 @@ class FormTagLib {
         List locales = []
         def i18n
         if (grailsApplication.warDeployed) {
-            i18n = grailsAttributes.getApplicationContext().getResource("WEB-INF/grails-app/i18n/").getFile().toString()
+            i18n = grailsAttributes.applicationContext.getResource("WEB-INF/grails-app/i18n/").getFile().toString()
         } else {
             i18n = "$BuildSettingsHolder.settings.baseDir/grails-app/i18n"
         }
@@ -267,7 +264,7 @@ class FormTagLib {
         }
 
 
-        def messageSource = grailsAttributes.getApplicationContext().getBean("messageSource")
+        def messageSource = grailsAttributes.applicationContext.messageSource
         def locale = RCU.getLocale(request)
         def writer = out
         attrs.id = attrs.id ? attrs.id : attrs.name

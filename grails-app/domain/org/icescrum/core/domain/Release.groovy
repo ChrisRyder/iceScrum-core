@@ -31,7 +31,7 @@ import org.springframework.security.core.context.SecurityContextHolder as SCH
 
 class Release extends TimeBox implements Cloneable {
 
-    static final long serialVersionUID = -8505932836642777504L
+    //static final long serialVersionUID = -8505932836642777504L
 
     static final int STATE_WAIT = 1
     static final int STATE_INPROGRESS = 2
@@ -55,7 +55,7 @@ class Release extends TimeBox implements Cloneable {
         cache true
         table 'icescrum2_release'
         vision type: 'text'
-        sprints cascade: 'all-delete-orphan', sort: 'id', cache: true
+        sprints cascade: 'all-delete-orphan', cache: true
         name index: 'rel_name_index'
     }
 

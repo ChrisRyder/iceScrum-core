@@ -37,6 +37,8 @@ import org.icescrum.core.domain.security.Authority
 
 class ScrumDetailsService extends GormUserDetailsService {
 
+    static final List NO_ROLES = [new GrantedAuthorityImpl(SpringSecurityUtils.NO_ROLE)]
+
 
     UserDetails loadUserByUsername(String username, boolean loadRoles) throws UsernameNotFoundException {
         def conf = SpringSecurityUtils.securityConfig

@@ -29,6 +29,7 @@ class TeamMigration {
                       or {
                         dbms(type:'mssql')
                         dbms(type:'hsqldb')
+                        dbms(type:'h2')
                       }
                     }
                 }
@@ -51,6 +52,15 @@ class TeamMigration {
                 }
                 sql('UPDATE icescrum2_team set uid = SUBSTRING(sys.fn_sqlvarbasetostr(HASHBYTES(\'MD5\',name)),3,32) WHERE uid is NULL')
                 addNotNullConstraint(tableName:"icescrum2_team",columnName:'uid',columnDataType:'varchar(max)')
+            }
+
+            changeSet(id:'add_uid_column_team_h2', author:'vbarrier') {
+                preConditions(onFail:"MARK_RAN"){
+                    dbms(type:'h2')
+                }
+                sql('CREATE ALIAS IF NOT EXISTS MD5 FOR "org.apache.commons.codec.digest.DigestUtils.md5Hex(java.lang.String)"')
+                sql('UPDATE icescrum2_team set uid = MD5(name) WHERE uid is NULL')
+                addNotNullConstraint(tableName:"icescrum2_team",columnName:'uid',columnDataType:'varchar(255)')
             }
     }
 }

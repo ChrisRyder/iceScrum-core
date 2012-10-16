@@ -1,24 +1,24 @@
 /*
- * Copyright (c) 2010 iceScrum Technologies.
- *
- * This file is part of iceScrum.
- *
- * iceScrum is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License.
- *
- * iceScrum is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with iceScrum.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Authors:
- *
- * Vincent Barrier (vbarrier@kagilum.com)
- */
+* Copyright (c) 2010 iceScrum Technologies.
+*
+* This file is part of iceScrum.
+*
+* iceScrum is free software: you can redistribute it and/or modify
+* it under the terms of the GNU Lesser General Public License as published by
+* the Free Software Foundation, either version 3 of the License.
+*
+* iceScrum is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU Lesser General Public License
+* along with iceScrum.  If not, see <http://www.gnu.org/licenses/>.
+*
+* Authors:
+*
+* Vincent Barrier (vbarrier@kagilum.com)
+*/
 
 
 grails.project.class.dir = "target/classes"
@@ -56,7 +56,8 @@ grails.project.dependency.resolution = {
         compile('org.codehaus.groovy.modules.http-builder:http-builder:0.5.0') {
             excludes "commons-logging", "xml-apis", "groovy"
         }
-        compile('org.atmosphere:atmosphere-runtime:0.8.6'){
+
+        compile('org.atmosphere:atmosphere-runtime:1.0.1'){
             excludes 'slf4j-api', 'atmosphere-ping'
         }
     }
@@ -66,19 +67,23 @@ grails.project.dependency.resolution = {
         compile 'org.icescrum:fluxiable:0.3.2'
         compile ':burning-image:0.5.0'
         compile 'org.icescrum:icescrum-attachmentable:0.3'
-        compile 'spring:spring-security-core:1.2.7.3'
-        compile 'spring:spring-security-acl:1.1.1'
+        compile 'org.grails.plugins:spring-security-core:1.2.7.3'
+        compile 'org.grails.plugins:spring-security-acl:1.1.1'
         compile 'org.icescrum:commentable:1.1'
         compile ':followable:0.3'
         compile ':autobase:1.0.0.0'
         compile ':jdbc-pool:1.0.9.3'
         compile ':spring-events:1.2'
-        compile ':springcache:1.3.1'
+        compile ':springcache:1.3.2-SNAPSHOT'
         compile ':mail:1.0'
         compile ':jasper:1.6.0'
-        compile ':maven-publisher:0.8.1'
         compile ':rollback-on-exception:0.1'
         compile ':wikitext:0.1.2'
-        compile ':hibernate:1.3.9'
+        build(":maven-publisher:0.8.1") {
+            export = false
+        }
+        runtime(":hibernate:$grailsVersion") {
+            export = false
+        }
     }
 }

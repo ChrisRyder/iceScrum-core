@@ -51,6 +51,7 @@ class UserMigration {
                         dbms(type:'mssql')
                         dbms(type:'hsqldb')
                         dbms(type:'postgresql')
+                        dbms(type:'h2')
                       }
                     }
                 }
@@ -79,6 +80,15 @@ class UserMigration {
                       dbms(type:'hsqldb')
                 }
                 sql('CREATE ALIAS MD5 FOR "org.hsqldb.lib.MD5.encodeString"')
+                sql('UPDATE icescrum2_user set uid = MD5(CONCAT(username,email)) WHERE uid is NULL')
+                addNotNullConstraint(tableName:"icescrum2_user",columnName:'uid',columnDataType:'varchar(255)')
+            }
+
+            changeSet(id:'add_uid_column_user_h2', author:'vbarrier') {
+                preConditions(onFail:"MARK_RAN"){
+                    dbms(type:'h2')
+                }
+                sql('CREATE ALIAS IF NOT EXISTS MD5 FOR "org.apache.commons.codec.digest.DigestUtils.md5Hex(java.lang.String)"')
                 sql('UPDATE icescrum2_user set uid = MD5(CONCAT(username,email)) WHERE uid is NULL')
                 addNotNullConstraint(tableName:"icescrum2_user",columnName:'uid',columnDataType:'varchar(255)')
             }

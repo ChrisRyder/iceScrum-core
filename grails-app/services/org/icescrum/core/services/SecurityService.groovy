@@ -211,19 +211,19 @@ class SecurityService {
                     return request.productArchived ?: false
                 else
                     product = parseCurrentRequestProduct(request)
-            }else if (product in Product) {
-                p = product
-                product = product.id
+        }else if (product in Product) {
+            p = product
+            product = product.id
+        }
+        if (product) {
+            return springcacheService.doWithCache(CACHE_ARCHIVEDPRODUCT, new CacheKeyBuilder().append(product).append(getProductLastUpdated(product)).toCacheKey()) {
+                if (!p) p = Product.get(product)
+                if (!p) return false
+                return p.preferences.archived
             }
-            if (product) {
-                return springcacheService.doWithCache(CACHE_ARCHIVEDPRODUCT, new CacheKeyBuilder().append(product).append(getProductLastUpdated(product)).toCacheKey()) {
-                    if (!p) p = Product.get(product)
-                    if (!p) return false
-                    return p.preferences.archived
-                }
-            }else{
-                return null
-            }
+        }else{
+            return null
+        }
     }
 
     boolean inTeam(team, auth) {

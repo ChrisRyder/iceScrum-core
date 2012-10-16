@@ -64,7 +64,7 @@ class TableTagLib {
 
         pageScope.tableGroup.eachWithIndex { group, indexGroup ->
             out << '<tr class="table-line table-group" data-elemid="' + group.elementId + '">'
-            out << '<td ' + (group.header.class ? 'class="' + group.header.class + '"' : '') + ' class="collapse" colspan="' + maxCols + '">' + group.header.body() + '</td>'
+            out << '<td ' + (group.header.class ? 'class="' + group.header.class + '"' : '') + ' class="collapse" colspan="' + maxCols + '">' + (group.header.body ? group.header.body() : '') + '</td>'
             out << '</tr>'
             def editables = [:]
             maxRows = writeRows(group.rows, maxRows, maxCols, editables, 'table-group-' + group.elementId)
@@ -104,7 +104,7 @@ class TableTagLib {
                 key: attrs.key,
                 width: attrs.width ?: null,
                 'class': attrs."class",
-                body: body ?: {->}
+                body: body ?: null
         ]
         pageScope.rowHeaders << options
     }
@@ -152,7 +152,7 @@ class TableTagLib {
     def tableGroupHeader = { attrs, body ->
         def options = [
                 class: attrs.class ?: null,
-                body: body ?: {->}
+                body: body ?: null
         ]
         pageScope.groupHeader = options
     }
@@ -188,7 +188,7 @@ class TableTagLib {
                 key: attrs.key,
                 editable: attrs.editable ?: null,
                 'class': attrs.'class',
-                body: body ?: {->}
+                body: body ?: null
         ]
         pageScope.tableColumns << options
     }
@@ -225,9 +225,10 @@ class TableTagLib {
                 if (editable && !editables."${editable}") {
                     editables."${editable}" = [id: col.editable.id ?: '', type: col.editable.type, values: col.editable.values ?: null, detach: col.editable.detach ?: false, highlight: col.editable.highlight ?: false]
                 }
-
-                col."class" = col."class" ?: ""
-                out << '<td class="' + col."class" + ' break-word"><div ' + is.editableCell(col.editable) + '>' + is.nbps(null, col?.body(row.attrs)) + '</div></td>'
+                col['class'] = col['class'] ?: ""
+                out << '<td class="' + col['class'] + ' break-word">'
+                out << '<div ' + editableCell(col.editable) + '>'
+                out << is.nbps( null, col.body ? col.body(row.attrs) : '' ) + '</div></td>'
             }
             out << '</tr>'
         }
@@ -254,11 +255,12 @@ class TableTagLib {
         out << body()?.trim() ?: ''
     }
 
-    def editableCell = {attrs ->
-        if (attrs?.type && attrs?.name && !attrs?.disabled)
-            out << 'class="table-cell table-cell-editable table-cell-' + attrs.type + (attrs.id ? '-' + attrs.id : '') + ' table-cell-editable-' + attrs.type + (attrs.id ? '-' + attrs.id : '') + '" name="' + attrs.name + '"'
-        else
-            out << 'class="table-cell table-cell-' + attrs.type + (attrs.id ? '-' + attrs.id : '') + '" name="' + attrs.name + '"'
+    private editableCell(def attrs) {
+        if (attrs && attrs.type && attrs.name && !attrs.disabled)
+            return 'class="table-cell table-cell-editable table-cell-' + attrs.type + (attrs.id ? '-' + attrs.id : '') + ' table-cell-editable-' + attrs.type + (attrs.id ? '-' + attrs.id : '') + '" name="' + attrs.name + '"'
+        else {
+            return 'class="table-cell"'
+        }
     }
 
     def jeditable = {attrs ->

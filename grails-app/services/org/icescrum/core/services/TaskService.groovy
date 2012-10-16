@@ -125,6 +125,9 @@ class TaskService {
      */
     @PreAuthorize('inProduct(#story.backlog) and !archivedProduct(#story.backlog)')
     void changeTaskStory(Task task, Story story, User user) {
+        if (!(story.state in [Story.STATE_PLANNED,Story.STATE_INPROGRESS]) || !(task.parentStory.state in [Story.STATE_PLANNED,Story.STATE_INPROGRESS])){
+            throw new IllegalStateException('is.task.error.not.updated')
+        }
         if (task.parentStory.id != story.id) {
             task.parentStory = story
             update(task, user)
@@ -151,6 +154,9 @@ class TaskService {
      */
     @PreAuthorize('inProduct(#story.backlog) and !archivedProduct(#story.backlog)')
     void sprintTaskToStoryTask(Task task, Story story, User user) {
+        if (!(story.state in [Story.STATE_PLANNED,Story.STATE_INPROGRESS])){
+            throw new IllegalStateException('is.task.error.not.updated')
+        }
         task.type = null
         update(task, user)
         task.parentStory = story
