@@ -63,7 +63,7 @@ public class ExcludeSessionBroadcaster extends org.atmosphere.util.ExcludeSessio
 
     @Override
     public Broadcaster addAtmosphereResource(AtmosphereResource r){
-        ((HttpServletRequest) r.getRequest()).setAttribute(SESSION_ID_ATTRIBUTE, ((HttpServletRequest) r.getRequest()).getSession().getId());
+        r.getRequest().setAttribute(SESSION_ID_ATTRIBUTE, r.getRequest().getSession().getId());
         super.addAtmosphereResource(r);
         return this;
     }

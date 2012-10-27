@@ -57,7 +57,7 @@ grails.project.dependency.resolution = {
             excludes "commons-logging", "xml-apis", "groovy"
         }
 
-        compile('org.atmosphere:atmosphere-runtime:1.0.1'){
+        compile('org.atmosphere:atmosphere-runtime:1.0.2'){
             excludes 'slf4j-api', 'atmosphere-ping'
         }
     }
